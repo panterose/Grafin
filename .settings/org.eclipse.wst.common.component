@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-modules id="moduleCoreId" project-version="1.5.0">
+    <wb-module deploy-name="/Grafin">
+        <wb-resource deploy-path="/" source-path="/quartz-0.4.2-grails-app-conf"/>
+        <wb-resource deploy-path="/" source-path="/quartz-0.4.2-grails-app-i18n"/>
+        <wb-resource deploy-path="/" source-path="/quartz-0.4.2-grails-app-services"/>
+        <wb-resource deploy-path="/" source-path="/quartz-0.4.2-src-java"/>
+        <wb-resource deploy-path="/" source-path="/quartz-0.4.2-src-groovy"/>
+        <wb-resource deploy-path="/" source-path="/console-1.0.1-grails-app-controllers"/>
+        <wb-resource deploy-path="/" source-path="/console-1.0.1-grails-app-services"/>
+        <wb-resource deploy-path="/" source-path="/console-1.0.1-grails-app-views"/>
+        <wb-resource deploy-path="/" source-path="/cache-headers-1.1.2-grails-app-i18n"/>
+        <wb-resource deploy-path="/" source-path="/cache-headers-1.1.2-grails-app-services"/>
+        <wb-resource deploy-path="/" source-path="/grails-app/jobs"/>
+        <wb-resource deploy-path="/" source-path="/joda-time-1.1-grails-app-taglib"/>
+        <wb-resource deploy-path="/" source-path="/joda-time-1.1-src-java"/>
+        <wb-resource deploy-path="/" source-path="/joda-time-1.1-src-groovy"/>
+    </wb-module>
+</project-modules>
