@@ -15,5 +15,8 @@
         <wb-resource deploy-path="/" source-path="/joda-time-1.1-grails-app-taglib"/>
         <wb-resource deploy-path="/" source-path="/joda-time-1.1-src-java"/>
         <wb-resource deploy-path="/" source-path="/joda-time-1.1-src-groovy"/>
+        <wb-resource deploy-path="/" source-path="/google-chart-0.5.2-grails-app-i18n"/>
+        <wb-resource deploy-path="/" source-path="/google-chart-0.5.2-grails-app-taglib"/>
+        <wb-resource deploy-path="/" source-path="/google-chart-0.5.2-src-groovy"/>
     </wb-module>
 </project-modules>

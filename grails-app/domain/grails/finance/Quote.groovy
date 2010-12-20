@@ -10,6 +10,7 @@ class Quote {
 	
 	Double open
 	Double low
+	Double high
 	Double close
 	Double volume
 	

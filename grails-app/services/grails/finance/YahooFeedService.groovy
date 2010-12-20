@@ -23,13 +23,13 @@ class YahooFeedService {
 	def importAllInstrumentsFromIndex(idx) {
 		//System.properties.putAll( ["http.proxyHost":"nhqproxy.uk.hibm.hsbc", "http.proxyPort":"80"] )
 		withHttp(uri: "http://finance.yahoo.com") {
+			//--- 
 			// set proxy using default settings
-			/*
+			//println getSchemeRegistry()
 			ProxySelectorRoutePlanner routePlanner = new ProxySelectorRoutePlanner(
 				delegate.client.getConnectionManager().getSchemeRegistry(),
 				ProxySelector.getDefault());
 			delegate.client.setRoutePlanner(routePlanner);
-			*/
 			//----
 			
 			

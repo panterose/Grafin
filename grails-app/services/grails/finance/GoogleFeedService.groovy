@@ -4,6 +4,8 @@ import static groovyx.net.http.ContentType.HTML
 import org.joda.time.*
 import org.joda.time.format.*
 import org.joda.time.contrib.hibernate.*
+import org.apache.http.impl.conn.*
+
 
 class GoogleFeedService {
 	static transactional = true
@@ -23,6 +25,15 @@ class GoogleFeedService {
 	boolean importHistoricalFromInstryment(inst, withExchangeSymbolAdded) {
 		try {
 			withAsyncHttp(poolSize : 4, uri : "http://finance.google.com", contentType : HTML) {
+				//---
+				// set proxy using default settings
+				//println getSchemeRegistry()
+				ProxySelectorRoutePlanner routePlanner = new ProxySelectorRoutePlanner(
+					delegate.client.getConnectionManager().getSchemeRegistry(),
+					ProxySelector.getDefault());
+				delegate.client.setRoutePlanner(routePlanner);
+				//----
+				
 				def symbol = withExchangeSymbolAdded ? inst.exchange?.symbol + ":" + inst.symbol : inst.symbol 
 				def result = get(path:'/finance/historical', query: [q:symbol, output:'csv']) { resp, html -> 
 					println ' got async response!'
