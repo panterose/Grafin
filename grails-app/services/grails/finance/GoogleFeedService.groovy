@@ -7,34 +7,41 @@ import org.joda.time.contrib.hibernate.*
 
 class GoogleFeedService {
 	static transactional = true
-
+	
 	def importHistoricals() {
 		def imports = [:]
 		Instrument.list().each {Instrument inst ->
 			if (! Quote.findByInstrument(inst)) {
-				try {
-					importHistoricalFromInstryment(inst)
-				} catch (Exception e) {e.printStackTrace()}
+				// try to import with the exchange prefix or not: google seems to struggle otherwise
+				if (!importHistoricalFromInstryment(inst, false)) {
+					importHistoricalFromInstryment(inst, true)
+				}
 			}
 		}
 	}
-
-	def importHistoricalFromInstryment(inst) {
-		
-		withAsyncHttp(poolSize : 4, uri : "http://finance.google.com", contentType : HTML) {
-			def result = get(path:'/finance/historical', query: [q:inst.symbol, output:'csv']) { resp, html -> 
-				println ' got async response!'
-				return html
+	
+	boolean importHistoricalFromInstryment(inst, withExchangeSymbolAdded) {
+		try {
+			withAsyncHttp(poolSize : 4, uri : "http://finance.google.com", contentType : HTML) {
+				def symbol = withExchangeSymbolAdded ? inst.exchange?.symbol + ":" + inst.symbol : inst.symbol 
+				def result = get(path:'/finance/historical', query: [q:symbol, output:'csv']) { resp, html -> 
+					println ' got async response!'
+					return html
+				}
+				
+				assert result instanceof java.util.concurrent.Future
+				
+				while (! result.done) {
+					Thread.sleep(2000)
+				}
+				
+				importHistoricalFromInstrAndHtml(inst, result.get().toString())
 			}
-			
-			assert result instanceof java.util.concurrent.Future
-			
-			 while (! result.done) {
-				Thread.sleep(2000)
-			 }
-
-			importHistoricalFromInstrAndHtml(inst, result.get().toString())
+		} catch (Exception e) {
+			println "Error importing $inst: ${e.message}"
+			return false
 		}
+		return true
 	}
 	
 	def importHistoricalFromInstrAndHtml(inst, html) {
@@ -43,7 +50,7 @@ class GoogleFeedService {
 			if(!line.contains('Date')) {
 				def fields = line.split(',')
 				def dateTime = DateTimeFormat.forPattern("dd-MMM-yy").parseDateTime(fields[0])
-
+				
 				new Quote(instrument: inst,
 						date: dateTime,
 						open: fields[1],
