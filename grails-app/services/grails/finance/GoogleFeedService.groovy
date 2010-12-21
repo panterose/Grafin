@@ -24,16 +24,16 @@ class GoogleFeedService {
 	
 	boolean importHistoricalFromInstryment(inst, withExchangeSymbolAdded) {
 		try {
+			//---
+			// set proxy using default settings
+			//println getSchemeRegistry()
+			ProxySelectorRoutePlanner routePlanner = new ProxySelectorRoutePlanner(
+				delegate.client.getConnectionManager().getSchemeRegistry(),
+				ProxySelector.getDefault());
+			delegate.client.setRoutePlanner(routePlanner);
+			//----
+			
 			withAsyncHttp(poolSize : 4, uri : "http://finance.google.com", contentType : HTML) {
-				//---
-				// set proxy using default settings
-				//println getSchemeRegistry()
-				ProxySelectorRoutePlanner routePlanner = new ProxySelectorRoutePlanner(
-					delegate.client.getConnectionManager().getSchemeRegistry(),
-					ProxySelector.getDefault());
-				delegate.client.setRoutePlanner(routePlanner);
-				//----
-				
 				def symbol = withExchangeSymbolAdded ? inst.exchange?.symbol + ":" + inst.symbol : inst.symbol 
 				def result = get(path:'/finance/historical', query: [q:symbol, output:'csv']) { resp, html -> 
 					println ' got async response!'
