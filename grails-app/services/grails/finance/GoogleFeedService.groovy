@@ -10,21 +10,25 @@ import org.apache.http.impl.conn.*
 class GoogleFeedService {
 	static transactional = true
 	
+	def backgroundService
+	
 	def importHistoricals() {
 		def imports = [:]
 		Instrument.list().each {Instrument inst ->
 			if (! Quote.findByInstrument(inst)) {
 				// try to import with the exchange prefix or not: google seems to struggle otherwise
-				if (!importHistoricalFromInstryment(inst, false)) {
-					importHistoricalFromInstryment(inst, true)
-				}
+				backgroundService.execute( "Import $inst", {
+					if (!importHistoricalFromInstryment(inst, false)) {
+						importHistoricalFromInstryment(inst, true)
+					}
+				})
 			}
 		}
 	}
 	
 	boolean importHistoricalFromInstryment(inst, withExchangeSymbolAdded) {
 		try {
-			withAsyncHttp(poolSize : 4, uri : "http://finance.google.com", contentType : HTML) {
+			withHttp(uri : "http://finance.google.com", contentType : HTML) {
 				//---
 				// set proxy using default settings
 				//println getSchemeRegistry()
@@ -34,19 +38,11 @@ class GoogleFeedService {
 				delegate.client.setRoutePlanner(routePlanner);
 				//----
 				
-				def symbol = withExchangeSymbolAdded ? inst.exchange?.symbol + ":" + inst.symbol : inst.symbol 
-				def result = get(path:'/finance/historical', query: [q:symbol, output:'csv']) { resp, html -> 
-					println ' got async response!'
-					return html
-				}
+				def symbol = withExchangeSymbolAdded ? inst.exchange?.symbol + ":" + inst.symbol : inst.symbol
+				println "import historical for [$symbol] ${inst}"
+				def result = get(path:'/finance/historical', query: [q:symbol, output:'csv'])
 				
-				assert result instanceof java.util.concurrent.Future
-				
-				while (! result.done) {
-					Thread.sleep(2000)
-				}
-				
-				importHistoricalFromInstrAndHtml(inst, result.get().toString())
+				importHistoricalFromInstrAndHtml(inst, result.text())
 			}
 		} catch (Exception e) {
 			println "Error importing $inst: ${e.message}"
@@ -56,7 +52,7 @@ class GoogleFeedService {
 	}
 	
 	def importHistoricalFromInstrAndHtml(inst, html) {
-		println "import historical for ${inst}"
+		
 		for(line in html.split('\n')) {
 			if(!line.contains('Date')) {
 				def fields = line.split(',')
