@@ -1,6 +1,6 @@
 package grails.finance
 
-@Immutable
+//@Immutable
 class Bin {
 	double start
 	double end
