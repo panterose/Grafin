@@ -43,7 +43,7 @@ class YahooFeedService {
 
 			 
 			 symbols.each {
-				 new Instrument(exchange:idx.exchange, index:idx, name: it.name, symbol:it.symbol, type: "Stock").save()
+				 new Instrument(exchange:idx.exchange, index:idx, name: it.name, symbol:it.symbol.split("\\.")[0], type: "Stock").save()
 			 }
 			 
 		 }

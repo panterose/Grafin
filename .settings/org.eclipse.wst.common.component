@@ -18,5 +18,7 @@
         <wb-resource deploy-path="/" source-path="/google-chart-0.5.2-grails-app-i18n"/>
         <wb-resource deploy-path="/" source-path="/google-chart-0.5.2-grails-app-taglib"/>
         <wb-resource deploy-path="/" source-path="/google-chart-0.5.2-src-groovy"/>
+        <wb-resource deploy-path="/" source-path="/background-thread-1.6-grails-app-services"/>
+        <wb-resource deploy-path="/" source-path="/background-thread-1.6-src-java"/>
     </wb-module>
 </project-modules>
